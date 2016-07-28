@@ -1,10 +1,12 @@
 'use strict';
 $(document).ready(function() {
 	var fs = require('fs');
+
 	const dialog = require('electron').remote.dialog;
+	const app = require('electron').remote.app;
 
 	var socket;
-	var arr = ['ssds'];
+	var s = '';
 	function connect() {
 		var host = "ws://localhost:" + $('#portnumber').val();
 
@@ -39,8 +41,15 @@ $(document).ready(function() {
 					$('#_play').removeClass('btn-primary');
 					$('#_record').removeAttr('disabled');
 					$('#file').val('');
-				} else if (json.action || json.event.type=='init'){
-					arr.push(msg.sction);
+				} else if (json.action){
+					console.log(msg.data);
+					s = s + S(msg.data).between('{"action":', '}}').s + '},';
+				} else if (json.event.type=='init'){
+					s = '{"start_time":';
+					s = s + json.event.start_time;
+					s = s + ',"start_url":"';
+					s = s + json.event.start_url;
+					s = s + '","actions":[';
 				}
 				message('<p class="message">Received: ' + msg.data);
 			}
@@ -99,9 +108,10 @@ $(document).ready(function() {
 				$('#_record').text("Record");
 				$('#_record').removeAttr('name');
 				$('#_play').removeClass('disabled');
+				s = s.substring(0,s.length-1) + ']}';
 				dialog.showSaveDialog({title: 'Save as JSON',filters: [{name: 'JSON', extensions: ['json']}]},function (fileName) {
     			if (fileName === undefined) return;
-    			fs.writeFile(fileName, arr, function (err) {
+    			fs.writeFile(fileName, s, function (err) {
     			});
   			});
 			} else {
@@ -127,6 +137,8 @@ $(document).ready(function() {
 	$('#_path').click(function() {
 		if (localStorage.getItem('path')){
 			$('#defaultpath').val(localStorage.getItem('path'));
+		} else {
+			$('#defaultpath').val(app.getPath('appData'));
 		}
 		$('#pathModal').modal('show');
 	})
