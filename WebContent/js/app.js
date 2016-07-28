@@ -13,10 +13,10 @@ $(document).ready(function() {
 		try {
 			socket = new WebSocket(host);
 
-			message('<p class="event">Socket Status: ' + socket.readyState);
+			//message('<p class="event">Socket Status: ' + socket.readyState);
 
 			socket.onopen = function() {
-				message('<p class="event">Socket Status: ' + socket.readyState + ' (open)');
+				//message('<p class="event">Socket Status: ' + socket.readyState + ' (open)');
 				if (socket.readyState === 1) {
 					if (localStorage.getItem('path')){
 						$('#_record').removeAttr('disabled');
@@ -55,7 +55,7 @@ $(document).ready(function() {
 			}
 
 			socket.onclose = function() {
-				message('<p class="event">Socket Status: ' + socket.readyState + ' (Closed)');
+				//message('<p class="event">Socket Status: ' + socket.readyState + ' (Closed)');
 				if (socket.readyState === 3) {
 					$('#_path').attr('disabled',true);
 					$('#_path').add('disabled',true);
@@ -95,6 +95,7 @@ $(document).ready(function() {
 
 	$('#_connect').click(function() {
 			if ($('#_connect').attr('name') == 'disconnected') {
+				$('#portnumber').val('8000');
 				$('#portModal').modal('show');
 			} else {
 				socket.close();
@@ -113,6 +114,8 @@ $(document).ready(function() {
     			if (fileName === undefined) return;
     			fs.writeFile(fileName, s, function (err) {
     			});
+					s="";
+					$('#chatLog').empty();
   			});
 			} else {
 				if (localStorage.getItem('url')){

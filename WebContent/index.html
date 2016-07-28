@@ -10,11 +10,40 @@
 	module.paths.push(__dirname+'/node_modules');
 	window.$ = window.jQuery = require('jquery');
 	var S = require('string');
+	//require('handlebars');
+
 </script>
-<!-- <script src="js/jquery.min.js"></script> -->
+<script src="js/handlebars-v4.0.5.js"></script>
+<script id="handlebars-demo" type="text/x-handlebars-template">
+	{{#each arr}}
+				<div class="modal fade" id="{{this.modalid}}Modal" tabindex="-1" role="dialog" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+								<h4 class="modal-title" id="{{this}}ModalLabel">Please select the {{this.label}}</h4>
+							</div>
+							<div class="modal-body">
+								<form>
+									<div class="form-group">
+										<label for="portnumber" class="form-control-label">{{this.label}}:</label> <input type="text" class="form-control" id="{{this.vid}}">
+									</div>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-primary" id="{{this.id}}">Start</button>
+							</div>
+						</div>
+					</div>
+				</div>
+	{{/each}}
+</script>
+
 <script src="js/tether.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
-<script src="js/main.js"></script>
+<script src="js/app.js"></script>
 
 </head>
 <body>
@@ -31,84 +60,14 @@
 
 			<div id="chatLog"></div>
 			<!-- #chatLog -->
-
-			<!-- ######################################################################################################################################### -->
-			<!-- #modal for port -->
-			<div class="modal fade" id="portModal" tabindex="-1" role="dialog" aria-hidden="true">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-							<h4 class="modal-title" id="portModalLabel">Please select the port to connect</h4>
-						</div>
-						<div class="modal-body">
-							<form>
-								<div class="form-group">
-									<label for="portnumber" class="form-control-label">Port:</label> <input type="text" class="form-control" id="portnumber" value="8000">
-								</div>
-							</form>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-primary" id="connect">Connect</button>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- ######################################################################################################################################### -->
-
-			<!-- ######################################################################################################################################### -->
-			<!-- #modal for URL -->
-			<div class="modal fade" id="recordModal" tabindex="-1" role="dialog" aria-hidden="true">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-							<h4 class="modal-title" id="recordModalLabel">Please select the URL to start with</h4>
-						</div>
-						<div class="modal-body">
-							<form>
-								<div class="form-group">
-									<label for="url" class="form-control-label">URL:</label> <input type="text" class="form-control" id="url" value="http://www.bahn.de">
-								</div>
-							</form>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-primary" id="record">Record</button>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- ######################################################################################################################################### -->
-
-			<!-- ######################################################################################################################################### -->
-			<!-- #modal for URL -->
-			<div class="modal fade" id="pathModal" tabindex="-1" role="dialog" aria-hidden="true">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-							<h4 class="modal-title" id="pathModalLabel">Please set the default Path</h4>
-						</div>
-						<div class="modal-body">
-							<form>
-								<div class="form-group">
-									<label for="path" class="form-control-label">URL:</label> <input type="text" class="form-control" id="defaultpath" value="C:\users">
-								</div>
-							</form>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-primary" id="path">Submit</button>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- ######################################################################################################################################### -->
+			<script>
+				var template = $('#handlebars-demo').html();
+				var templateScript = Handlebars.compile(template);
+				var context = {"arr":[{"id":"connect","modalid":"port","vid":"portnumber","label":"Port"},{"id":"record","modalid":"record","vid":"url","label":"URL"},{"id":"path","modalid":"path","vid":"defaultpath","label":"Path"}]};
+				var html = templateScript(context);
+				var d1 = document.getElementById('chatLog');
+				d1.insertAdjacentHTML('afterend', html);
+			</script>
 
 		</div>
 	</div>
