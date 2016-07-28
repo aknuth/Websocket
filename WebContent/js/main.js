@@ -15,6 +15,9 @@ $(document).ready(function() {
 					if (localStorage.getItem('path')){
 						$('#_record').removeAttr('disabled');
 						$('#_play').removeClass('disabled');
+						var p = localStorage.getItem('path');
+						var msg = {"action":"set_path","dir":p};
+						socket.send(JSON.stringify(msg));
 					}
 					$('#_path').removeAttr('disabled');
 					$('#_connect').removeClass('btn-secondary');
@@ -119,6 +122,9 @@ $(document).ready(function() {
 
 	$('#path').click(function() {
 		$('#pathModal').modal('hide');
+		var p = $('#defaultpath').val()
+		var msg = {"action":"set_path","dir":p};
+		socket.send(JSON.stringify(msg));
 		localStorage.setItem('path', $('#defaultpath').val());
 		$('#_record').removeAttr('disabled');
 		$('#_play').removeClass('disabled');
