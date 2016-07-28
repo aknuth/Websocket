@@ -14,5 +14,5 @@ app.on('ready', () => {
 	//console.log(dialog.showOpenDialog({properties: ['openFile', 'openDirectory', 'multiSelections']}))
 });
 app.on('browser-window-created',function(e,window) {
-    //window.setMenu(null);
+    window.setMenu(null);
 });
