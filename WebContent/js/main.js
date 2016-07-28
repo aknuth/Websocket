@@ -1,6 +1,10 @@
+'use strict';
 $(document).ready(function() {
+	var fs = require('fs');
+	const dialog = require('electron').remote.dialog;
 
 	var socket;
+	var arr = ['ssds'];
 	function connect() {
 		var host = "ws://localhost:" + $('#portnumber').val();
 
@@ -35,6 +39,8 @@ $(document).ready(function() {
 					$('#_play').removeClass('btn-primary');
 					$('#_record').removeAttr('disabled');
 					$('#file').val('');
+				} else if (json.action || json.event.type=='init'){
+					arr.push(msg.sction);
 				}
 				message('<p class="message">Received: ' + msg.data);
 			}
@@ -93,6 +99,11 @@ $(document).ready(function() {
 				$('#_record').text("Record");
 				$('#_record').removeAttr('name');
 				$('#_play').removeClass('disabled');
+				dialog.showSaveDialog({title: 'Save as JSON',filters: [{name: 'JSON', extensions: ['json']}]},function (fileName) {
+    			if (fileName === undefined) return;
+    			fs.writeFile(fileName, arr, function (err) {
+    			});
+  			});
 			} else {
 				if (localStorage.getItem('url')){
 						$('#url').val(localStorage.getItem('url'));
