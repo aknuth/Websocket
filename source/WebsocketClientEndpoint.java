@@ -63,9 +63,6 @@ public class WebsocketClientEndpoint {
 				try {
 					while (true){
 						Thread.sleep(20000);
-						if (session !=null && session.isOpen()){
-							sendMessage("{\"message ...\":"+System.currentTimeMillis()+"}");
-						}
 					}
 				} catch (Exception e) {
 					System.err.println(e.toString());

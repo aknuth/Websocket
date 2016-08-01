@@ -1,4 +1,32 @@
 'use strict';
+
+class Color {
+        constructor(name) {
+            this.name = name;
+        }
+        toString() {
+            return `Color.${this.name}`;
+        }
+}
+class State {
+        constructor(name) {
+            this.name = name;
+        }
+        toString() {
+            return `Color.${this.name}`;
+        }
+}
+
+State.ENABLED = new State('ENABLED');
+State.DISABLED = new State('DISABLED');
+State.STAY = new State('STAY');
+
+Color.RED = new Color('RED');
+Color.GREEN = new Color('GREEN');
+Color.BLUE = new Color('BLUE');
+Color.WHITE = new Color('WHITE');
+Color.STAY = new Color('STAY');
+
 $(document).ready(function() {
 	var fs = require('fs');
 
@@ -7,39 +35,34 @@ $(document).ready(function() {
 
 	var socket;
 	var s = '';
+
+
+
 	function connect() {
 		var host = "ws://localhost:" + $('#portnumber').val();
 
 		try {
 			socket = new WebSocket(host);
 
-			//message('<p class="event">Socket Status: ' + socket.readyState);
-
 			socket.onopen = function() {
-				//message('<p class="event">Socket Status: ' + socket.readyState + ' (open)');
 				if (socket.readyState === 1) {
 					if (localStorage.getItem('path')){
-						$('#_record').removeAttr('disabled');
-						$('#_play').removeClass('disabled');
+						switchButton('#_record',State.ENABLED);
+						switchButton('#_play',State.ENABLED);
 						var p = localStorage.getItem('path');
 						var msg = {"action":"set_path","dir":p};
 						socket.send(JSON.stringify(msg));
 					}
-					$('#_path').removeAttr('disabled');
-					$('#_connect').removeClass('btn-secondary');
-					$('#_connect').addClass('btn-success');
-					$('#_connect').text("Disconnect");
-					$('#_connect').attr('name', 'connected');
+					switchButton('#_path',State.ENABLED);
+					switchButton('#_connect',State.STAY,Color.GREEN,"Disconnect",'connected');
 				}
 			}
 
 			socket.onmessage = function(msg) {
 				var json = JSON.parse(msg.data);
 				if (json.callback === 'play' && json.state === 'finished' ){
-					$('#_play').removeClass('disabled');
-					$('#_play').addClass('btn-secondary');
-					$('#_play').removeClass('btn-primary');
-					$('#_record').removeAttr('disabled');
+					switchButton('#_play',State.ENABLED,Color.WHITE);
+					switchButton('#_record',State.ENABLED);
 					$('#file').val('');
 				} else if (json.action){
 					console.log(msg.data);
@@ -55,25 +78,14 @@ $(document).ready(function() {
 			}
 
 			socket.onclose = function() {
-				//message('<p class="event">Socket Status: ' + socket.readyState + ' (Closed)');
 				if (socket.readyState === 3) {
-					$('#_path').attr('disabled',true);
-					$('#_path').add('disabled',true);
-					$('#_connect').addClass('btn-secondary');
-					$('#_connect').removeClass('btn-success');
-					$('#_connect').text("Connect");
-					$('#_connect').attr('name', 'disconnected');
+					//$('#_path').attr('disabled',true);
+					switchButton('#_path',State.DISABLED);
+					switchButton('#_connect',State.STAY,Color.WHITE,'Connect','disconnected');
+					switchButton('#_play',State.DISABLED,Color.WHITE);
+					switchButton('#_record',State.DISABLED,Color.WHITE,'Record','');
 
-					$('#_play').addClass('disabled');
-					$('#_play').removeClass('btn-primary');
-					$('#_play').addClass('btn-secondary');
 					$('#file').val('');
-
-					$('#_record').attr('disabled',true);
-					$('#_record').removeClass('btn-danger');
-					$('#_record').addClass('btn-secondary');
-					$('#_record').text("Record");
-					$('#_record').removeAttr('name');
 
 			}
 			}
@@ -106,11 +118,6 @@ $(document).ready(function() {
 			if ($('#_record').attr('name') == 'recording') {
 				var msg = {"action":"record","state":"finished"};
 				socket.send(JSON.stringify(msg));
-				$('#_record').removeClass('btn-danger');
-				$('#_record').addClass('btn-secondary');
-				$('#_record').text("Record");
-				$('#_record').removeAttr('name');
-				$('#_play').removeClass('disabled');
 				s = s.substring(0,s.length-1) + ']}';
 				dialog.showSaveDialog({title: 'Save as JSON',filters: [{name: 'JSON', extensions: ['json']}]},function (fileName) {
     			if (fileName === undefined) return;
@@ -119,6 +126,8 @@ $(document).ready(function() {
 					s="";
 					$('#chatLog').empty();
   			});
+				switchButton('#_record',State.STAY,Color.WHITE,'Record','');
+				switchButton('#_play',State.ENABLED);
 			} else {
 				if (localStorage.getItem('url')){
 						$('#url').val(localStorage.getItem('url'));
@@ -132,11 +141,8 @@ $(document).ready(function() {
 		localStorage.setItem('url',$('#url').val())
 		var msg = {"action":"record","state":"begin","url":$('#url').val()};
 		socket.send(JSON.stringify(msg));
-		$('#_record').addClass('btn-danger');
-		$('#_record').removeClass('btn-secondary');
-		$('#_record').text("Stop Record");
-		$('#_record').attr('name', 'recording');
-		$('#_play').addClass('disabled');
+		switchButton('#_record',State.STAY,Color.RED,'Stop Record','recording');
+		switchButton('#_play',State.DISABLED);
 	})
 
 	$('#_path').click(function() {
@@ -154,16 +160,25 @@ $(document).ready(function() {
 		var msg = {"action":"set_path","dir":p};
 		socket.send(JSON.stringify(msg));
 		localStorage.setItem('path', $('#defaultpath').val());
-		$('#_record').removeAttr('disabled');
-		$('#_play').removeClass('disabled');
+		switchButton('#_record',State.ENABLED);
+		switchButton('#_play',State.ENABLED);
 	})
 
 	$('#_play').click(function() {
-		var input = $('#file');
-		console.log(input.val().replace(/\\/g, '/').replace(/.*\//, ''));
+		//var input = $('#file');
+		//console.log(input.val().replace(/\\/g, '/').replace(/.*\//, ''));
+		dialog.showOpenDialog({title: 'Open JSON for Play',filters: [{name: 'JSON', extensions: ['json']}]},function (fileName) {
+			if (fileName === undefined) return;
+			//var p = localStorage.getItem('path')+"\\"+label;
+			var msg = {"action":"play","json":fileName[0]}
+			socket.send(JSON.stringify(msg));
+			switchButton('#_play',State.STAY,Color.BLUE);
+			switchButton('#_play',State.ENABLED);
+			switchButton('#_record',State.DISABLED);
+		});
 	})
 
-	$(document).on('change', ':file', function() {
+/**	$(document).on('change', ':file', function() {
     var input = $(this),
         numFiles = input.get(0).files ? input.get(0).files.length : 1,
         label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
@@ -173,11 +188,48 @@ $(document).ready(function() {
 		var p = localStorage.getItem('path')+"\\"+label;
 		var msg = {"action":"play","json":p}
 		socket.send(JSON.stringify(msg));
-		$('#_play').removeClass('btn-secondary');
-		$('#_play').addClass('btn-primary');
-		$('#_play').addClass('disabled');
-		$('#_record').attr('disabled',true);
+		switchButton('#_record',State.STAY,Color.BLUE);
+		switchButton('#_record',State.ENABLED);
 	});
+*/
+
+	$.fn.removeClassPrefix = function(prefix){
+	    var c, regex = new RegExp("(^|\\s)" + prefix + "\\S+", 'g');
+	    return this.each(function(){
+	        c = this.getAttribute('class');
+	        this.setAttribute('class', c.replace(regex, ''));
+	    });
+	};
+
+	function switchButton(id,state,color,newtext,nameAttribute){
+		if (state === State.ENABLED){
+			$(id).removeAttr('disabled');
+		} else if (state === State.DISABLED){
+			$(id).attr('disabled',true);
+		}
+		if (color === Color.WHITE){
+			$(id).removeClassPrefix('btn-');
+			$(id).addClass('btn-secondary');
+		} else if (color === Color.RED){
+			$(id).removeClassPrefix('btn-');
+			$(id).addClass('btn-danger');
+		} else if (color === Color.BLUE){
+			$(id).removeClassPrefix('btn-');
+			$(id).addClass('btn-primary');
+		} else if (color === Color.GREEN){
+			$(id).removeClassPrefix('btn-');
+			$(id).addClass('btn-success');
+		}
+		if (newtext){
+			$(id).text(newtext);
+		}
+		if (nameAttribute){
+			$(id).removeAttr('name');
+			$(id).attr('name',nameAttribute);
+		} else if (nameAttribute === ''){
+			$(id).removeAttr('name');
+		}
+	}
 
 
 });
