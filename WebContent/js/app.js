@@ -104,6 +104,8 @@ $(document).ready(function() {
 
 	$('#_record').click(function() {
 			if ($('#_record').attr('name') == 'recording') {
+				var msg = {"action":"record","state":"finished"};
+				socket.send(JSON.stringify(msg));
 				$('#_record').removeClass('btn-danger');
 				$('#_record').addClass('btn-secondary');
 				$('#_record').text("Record");
@@ -128,7 +130,7 @@ $(document).ready(function() {
 	$('#record').click(function() {
 		$('#recordModal').modal('hide');
 		localStorage.setItem('url',$('#url').val())
-		var msg = {"action":"record","url":$('#url').val()};
+		var msg = {"action":"record","state":"begin","url":$('#url').val()};
 		socket.send(JSON.stringify(msg));
 		$('#_record').addClass('btn-danger');
 		$('#_record').removeClass('btn-secondary');
