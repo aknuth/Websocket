@@ -25,6 +25,8 @@ Color.RED = new Color('RED');
 Color.GREEN = new Color('GREEN');
 Color.BLUE = new Color('BLUE');
 Color.WHITE = new Color('WHITE');
+Color.ORANGE = new Color('ORANGE');
+Color.LIGHTBLUE = new Color('LIGHTBLUE');
 Color.STAY = new Color('STAY');
 
 $(document).ready(function() {
@@ -63,10 +65,12 @@ $(document).ready(function() {
 				if (json.callback === 'play' && json.state === 'finished' ){
 					switchButton('#_play',State.ENABLED,Color.WHITE);
 					switchButton('#_record',State.ENABLED);
-					$('#file').val('');
 				} else if (json.action){
 					console.log(msg.data);
 					s = s + S(msg.data).between('{"action":', '}}').s + '},';
+				} else if (json.event.type=='screenshot' || json.event.type=='domtree'){
+					switchButton('#_dom',State.STAY,COLOR.WHITE);
+					switchButton('#_screenshot',State.STAY,COLOR.WHITE);
 				} else if (json.event.type=='init'){
 					s = '{"start_time":';
 					s = s + json.event.start_time;
@@ -79,13 +83,10 @@ $(document).ready(function() {
 
 			socket.onclose = function() {
 				if (socket.readyState === 3) {
-					//$('#_path').attr('disabled',true);
 					switchButton('#_path',State.DISABLED);
 					switchButton('#_connect',State.STAY,Color.WHITE,'Connect','disconnected');
 					switchButton('#_play',State.DISABLED,Color.WHITE);
 					switchButton('#_record',State.DISABLED,Color.WHITE,'Record','');
-
-					$('#file').val('');
 
 			}
 			}
@@ -95,7 +96,9 @@ $(document).ready(function() {
 		}
 
 	}
-
+	$(".btn").mouseup(function(){
+	    $(this).blur();
+	})
 	function message(msg) {
 		$('#chatLog').append(msg + '</p>');
 	}
@@ -116,23 +119,25 @@ $(document).ready(function() {
 
 	$('#_record').click(function() {
 			if ($('#_record').attr('name') == 'recording') {
-				var msg = {"action":"record","state":"finished"};
-				socket.send(JSON.stringify(msg));
-				s = s.substring(0,s.length-1) + ']}';
 				dialog.showSaveDialog({title: 'Save as JSON',filters: [{name: 'JSON', extensions: ['json']}]},function (fileName) {
-    			if (fileName === undefined) return;
-    			fs.writeFile(fileName, s, function (err) {
-    			});
+					var msg = {"action":"record","state":"finished"};
+					socket.send(JSON.stringify(msg));
+					s = s.substring(0,s.length-1) + ']}';
+					if (fileName != undefined){
+						fs.writeFile(fileName, s, function (err) {});
+					} 
 					s="";
 					$('#chatLog').empty();
-  			});
-				switchButton('#_record',State.STAY,Color.WHITE,'Record','');
-				switchButton('#_play',State.ENABLED);
+					switchButton('#_pause',State.DISABLED);
+					switchButton('#_record',State.STAY,Color.WHITE,'Record','');
+					switchButton('#_play',State.ENABLED);
+				});
 			} else {
 				if (localStorage.getItem('url')){
-						$('#url').val(localStorage.getItem('url'));
+					$('#url').val(localStorage.getItem('url'));
 				}
 				$('#recordModal').modal('show');
+				switchButton('#_pause',State.ENABLED);
 			}
 	})
 
@@ -143,6 +148,7 @@ $(document).ready(function() {
 		socket.send(JSON.stringify(msg));
 		switchButton('#_record',State.STAY,Color.RED,'Stop Record','recording');
 		switchButton('#_play',State.DISABLED);
+		switchButton('#_pause',State.ENABLED);
 	})
 
 	$('#_path').click(function() {
@@ -165,11 +171,8 @@ $(document).ready(function() {
 	})
 
 	$('#_play').click(function() {
-		//var input = $('#file');
-		//console.log(input.val().replace(/\\/g, '/').replace(/.*\//, ''));
 		dialog.showOpenDialog({title: 'Open JSON for Play',filters: [{name: 'JSON', extensions: ['json']}]},function (fileName) {
 			if (fileName === undefined) return;
-			//var p = localStorage.getItem('path')+"\\"+label;
 			var msg = {"action":"play","json":fileName[0]}
 			socket.send(JSON.stringify(msg));
 			switchButton('#_play',State.STAY,Color.BLUE);
@@ -178,21 +181,36 @@ $(document).ready(function() {
 		});
 	})
 
-/**	$(document).on('change', ':file', function() {
-    var input = $(this),
-        numFiles = input.get(0).files ? input.get(0).files.length : 1,
-        label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-    input.trigger('fileselect', [numFiles, label]);
-  });
-	$(':file').on('fileselect', function(event, numFiles, label) {
-		var p = localStorage.getItem('path')+"\\"+label;
-		var msg = {"action":"play","json":p}
+	$('#_pause').click(function() {
+		if ($('#_pause').attr('name') == 'pause') {
+			var msg = {"action":"resume"};
+			socket.send(JSON.stringify(msg));
+			switchButton('#_pause',State.STAY,Color.WHITE,'Pause','');
+			switchButton('#_record',State.ENABLED);
+			switchButton('#_screenshot',State.DISABLED);
+			switchButton('#_dom',State.DISABLED);
+		} else {
+			var msg = {"action":"pause"};
+			socket.send(JSON.stringify(msg));
+			switchButton('#_pause',State.STAY,Color.ORANGE,'Resume','pause');
+			switchButton('#_record',State.DISABLED);
+			switchButton('#_screenshot',State.ENABLED);
+			switchButton('#_dom',State.ENABLED);
+		}
+	})
+	
+	$('#_screenshot').click(function() {
+		var msg = {"action":"screenshot"};
 		socket.send(JSON.stringify(msg));
-		switchButton('#_record',State.STAY,Color.BLUE);
-		switchButton('#_record',State.ENABLED);
-	});
-*/
-
+		switchButton('#_screenshot',State.STAY,COLOR.LIGHTBLUE);
+	})
+	
+	$('#_dom').click(function() {
+		var msg = {"action":"domtree"};
+		socket.send(JSON.stringify(msg));
+		switchButton('#_dom',State.STAY,COLOR.LIGHTBLUE);
+	})
+	
 	$.fn.removeClassPrefix = function(prefix){
 	    var c, regex = new RegExp("(^|\\s)" + prefix + "\\S+", 'g');
 	    return this.each(function(){
@@ -219,6 +237,12 @@ $(document).ready(function() {
 		} else if (color === Color.GREEN){
 			$(id).removeClassPrefix('btn-');
 			$(id).addClass('btn-success');
+		} else if (color === Color.ORANGE){
+			$(id).removeClassPrefix('btn-');
+			$(id).addClass('btn-warning');
+		} else if (color === Color.LIGHTBLUE){
+			$(id).removeClassPrefix('btn-');
+			$(id).addClass('btn-info');
 		}
 		if (newtext){
 			$(id).text(newtext);

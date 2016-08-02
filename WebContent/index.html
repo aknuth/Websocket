@@ -28,7 +28,8 @@
 							<div class="modal-body">
 								<form>
 									<div class="form-group">
-										<label for="portnumber" class="form-control-label">{{this.label}}:</label> <input type="text" class="form-control" id="{{this.vid}}">
+										<label class="form-control-label">{{this.label}}:</label> <input type="text" class="form-control" id="{{this.vid}}">
+										{{!-- <label class="form-control-label">{{this.label}}:</label> <input type="text" class="form-control" id="blabla">--}}
 									</div>
 								</form>
 							</div>
@@ -50,15 +51,30 @@
 	<div id="wrapper">
 
 		<div id="container">
-
-			<h1>WebEventRecorder GUI</h1>
-
-			<button type="button" class="btn btn-secondary" id="_connect" name="disconnected">Connect</button>
-			<button type="button" class="btn btn-secondary" id="_record" disabled>Record</button>
-			<button type="button" class="btn btn-secondary" id="_play" disabled>Play</button>
-			<!--<label class="btn btn-secondary disabled" id="_play">Play<input type="file" style="display: none;" accept=".json" id="file"></label>-->
-			<button type="button" class="btn btn-secondary" id="_path" disabled >Set Default Path</button>
-
+			 <div class="row">
+				<div class="col-sm-12">
+				<h1>WebEventRecorder GUI</h1>
+				</div>
+			</div>
+		    <div class="row">
+				<div class="col-sm-9">
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-secondary" id="_connect" name="disconnected">Connect</button>
+					</div>
+					<div class="btn-group" role="group" aria-label="Basic example">
+						<button type="button" class="btn btn-secondary" id="_record" disabled>Record</button>
+						<button type="button" class="btn btn-secondary" id="_pause" disabled>Pause</button>
+						<button type="button" class="btn btn-secondary" id="_screenshot" disabled>Screenshot</button>
+						<button type="button" class="btn btn-secondary" id="_dom" disabled>DOM</button>
+					</div>
+					<div class="btn-group" role="group" aria-label="Basic example">
+						<button type="button" class="btn btn-secondary" id="_play" disabled>Play</button>
+					</div>
+				</div>
+				<div class="col-sm-3">
+					<button type="button" class="btn btn-secondary" style="float:right" id="_path" disabled >Set Default Path</button>
+				</div>
+			</div>
 			<div id="chatLog"></div>
 			<!-- #chatLog -->
 			<script>
