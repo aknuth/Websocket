@@ -135,6 +135,8 @@ $(document).ready(function() {
 			} else {
 				if (localStorage.getItem('url')){
 					$('#url').val(localStorage.getItem('url'));
+					$('#width').val(localStorage.getItem('width'));
+					$('#height').val(localStorage.getItem('height'));
 				}
 				$('#recordModal').modal('show');
 				switchButton('#_pause',State.ENABLED);
@@ -144,7 +146,15 @@ $(document).ready(function() {
 	$('#record').click(function() {
 		$('#recordModal').modal('hide');
 		localStorage.setItem('url',$('#url').val())
-		var msg = {"action":"record","state":"begin","url":$('#url').val()};
+		var width = parseInt($('#width').val());
+		var height = parseInt($('#height').val());
+		if (width && height){
+			localStorage.setItem('width',width);
+			localStorage.setItem('height',height);
+			var msg = {"action":"record","state":"begin","url":$('#url').val(),"width":width,"height":height};
+		} else {
+			var msg = {"action":"record","state":"begin","url":$('#url').val()};
+		}
 		socket.send(JSON.stringify(msg));
 		switchButton('#_record',State.STAY,Color.RED,'Stop Record','recording');
 		switchButton('#_play',State.DISABLED);
