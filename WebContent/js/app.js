@@ -34,6 +34,7 @@ $(document).ready(function() {
 
 	const dialog = require('electron').remote.dialog;
 	const app = require('electron').remote.app;
+  //const actualdir = require('electron').remote.getGlobal("__dirname");
 
 	var socket;
 	var s = '';
@@ -87,7 +88,7 @@ $(document).ready(function() {
 					switchButton('#_connect',State.STAY,Color.WHITE,'Connect','disconnected');
 					switchButton('#_play',State.DISABLED,Color.WHITE);
 					switchButton('#_record',State.DISABLED,Color.WHITE,'Record','');
-
+					switchButton('#_pause', State.DISABLED,Color.WHITE, 'Pause', '');
 			}
 			}
 
@@ -125,7 +126,7 @@ $(document).ready(function() {
 					s = s.substring(0,s.length-1) + ']}';
 					if (fileName != undefined){
 						fs.writeFile(fileName, s, function (err) {});
-					} 
+					}
 					s="";
 					$('#chatLog').empty();
 					switchButton('#_pause',State.DISABLED);
@@ -197,30 +198,41 @@ $(document).ready(function() {
 			socket.send(JSON.stringify(msg));
 			switchButton('#_pause',State.STAY,Color.WHITE,'Pause','');
 			switchButton('#_record',State.ENABLED);
-			switchButton('#_screenshot',State.DISABLED);
-			switchButton('#_dom',State.DISABLED);
+			switchButton('#screenshot',State.DISABLED);
+			switchButton('#dom',State.DISABLED);
 		} else {
 			var msg = {"action":"pause"};
 			socket.send(JSON.stringify(msg));
 			switchButton('#_pause',State.STAY,Color.ORANGE,'Resume','pause');
 			switchButton('#_record',State.DISABLED);
-			switchButton('#_screenshot',State.ENABLED);
-			switchButton('#_dom',State.ENABLED);
+			switchButton('#screenshot',State.ENABLED);
+			switchButton('#dom',State.ENABLED);
 		}
 	})
-	
+
 	$('#_screenshot').click(function() {
 		var msg = {"action":"screenshot"};
 		socket.send(JSON.stringify(msg));
-		switchButton('#_screenshot',State.STAY,COLOR.LIGHTBLUE);
+		switchButton('#screenshot',State.STAY,Color.LIGHTBLUE);
 	})
-	
+  $('#_screenshot_size').click(function() {
+		var msg = {"action":"screenshot","x":0,"y":0,"width":800,"height":600};
+		socket.send(JSON.stringify(msg));
+		switchButton('#screenshot',State.STAY,Color.LIGHTBLUE);
+	})
+
 	$('#_dom').click(function() {
 		var msg = {"action":"domtree"};
 		socket.send(JSON.stringify(msg));
-		switchButton('#_dom',State.STAY,COLOR.LIGHTBLUE);
+		switchButton('#dom',State.STAY,Color.LIGHTBLUE);
 	})
-	
+  $('#_javascript').click(function() {
+    var ff = __dirname+'\\js\\jquerify.js';
+    var msg = {"action":"domtree","javascript":ff};
+		socket.send(JSON.stringify(msg));
+		switchButton('#dom',State.STAY,Color.LIGHTBLUE);
+	})
+
 	$.fn.removeClassPrefix = function(prefix){
 	    var c, regex = new RegExp("(^|\\s)" + prefix + "\\S+", 'g');
 	    return this.each(function(){
