@@ -82,7 +82,7 @@ $(document).ready(function() {
 					s = s + json.event.start_time;
 					s = s + ',"start_url":"';
 					s = s + json.event.start_url;
-					s = s + '","actions":['+'{"type":"resize","width":'+initialWidth+',"height":'+initialHeight+',"time":'+initialTime+'}';
+					s = s + '","actions":['+'{"type":"resize","width":'+initialWidth+',"height":'+initialHeight+',"time":'+initialTime+'},';
 				}
 				message('<p class="message">Received: ' + msg.data);
 			}
