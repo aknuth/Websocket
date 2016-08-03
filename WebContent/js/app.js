@@ -38,8 +38,9 @@ $(document).ready(function() {
 
 	var socket;
 	var s = '';
-
-
+	var initialWidth = 0;
+	var initialHeight = 0;
+	var initialTime = 0;
 
 	function connect() {
 		var host = "ws://localhost:" + $('#portnumber').val();
@@ -67,17 +68,21 @@ $(document).ready(function() {
 					switchButton('#_play',State.ENABLED,Color.WHITE);
 					switchButton('#_record',State.ENABLED);
 				} else if (json.action){
-					console.log(msg.data);
+					if (json.action.type==='resize'){
+						initialWidth = parseInt(json.action.width);
+						initialHeight = parseInt(json.action.height);
+						initialTime = parseInt(json.action.time);
+					}
 					s = s + S(msg.data).between('{"action":', '}}').s + '},';
 				} else if (json.event.type=='screenshot' || json.event.type=='domtree'){
-					switchButton('#_dom',State.STAY,COLOR.WHITE);
-					switchButton('#_screenshot',State.STAY,COLOR.WHITE);
+					switchButton('#_dom',State.STAY,Color.WHITE);
+					switchButton('#_screenshot',State.STAY,Color.WHITE);
 				} else if (json.event.type=='init'){
 					s = '{"start_time":';
 					s = s + json.event.start_time;
 					s = s + ',"start_url":"';
 					s = s + json.event.start_url;
-					s = s + '","actions":[';
+					s = s + '","actions":['+'{"type":"resize","width":'+initialWidth+',"height":'+initialHeight+',"time":'+initialTime+'}';
 				}
 				message('<p class="message">Received: ' + msg.data);
 			}
