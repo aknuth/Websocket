@@ -232,7 +232,7 @@ $(document).ready(function() {
 		switchButton('#dom',State.STAY,Color.LIGHTBLUE);
 	})
   $('#_javascript').click(function() {
-    var ff = __dirname+'\\js\\jquerify.js';
+    var ff = __dirname+'\\js\\examineTree_fix.js';
     var msg = {"action":"domtree","javascript":ff};
 		socket.send(JSON.stringify(msg));
 		switchButton('#dom',State.STAY,Color.LIGHTBLUE);
