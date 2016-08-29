@@ -74,10 +74,10 @@ $(document).ready(function() {
 						initialTime = parseInt(json.action.time);
 					}
 					s = s + S(msg.data).between('{"action":', '}}').s + '},';
-				} else if (json.event.type=='screenshot' || json.event.type=='domtree'){
+				} else if (json.event && (json.event.type=='screenshot' || json.event.type=='domtree')){
 					switchButton('#_dom',State.STAY,Color.WHITE);
 					switchButton('#_screenshot',State.STAY,Color.WHITE);
-				} else if (json.event.type=='init'){
+				} else if (json.event && json.event.type=='init'){
 					s = '{"start_time":';
 					s = s + json.event.start_time;
 					s = s + ',"start_url":"';

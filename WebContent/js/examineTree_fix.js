@@ -6,7 +6,7 @@ var console_log = "";
          if (child.nodeType===1){
              var cr = child.getBoundingClientRect();
              if (cr.top!=0 || cr.right!=0 || cr.width != 0 || cr.height != 0){
-                 console_log += (child.tagName+' -> x:'+cr.top+' y:'+cr.right+' width:'+cr.width+' height:'+cr.height) + '\n';
+                 console_log += (child.tagName+' -> x:'+cr.left+' y:'+cr.top+' width:'+cr.width+' height:'+cr.height) + '\n';
              }
              if (child.hasChildNodes()) {
                  examineTree(child);
