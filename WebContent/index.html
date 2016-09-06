@@ -33,6 +33,9 @@
 											<label class="form-control-label">Width:</label> <input type="text" class="form-control" id="width">
 											<label class="form-control-label">Height:</label> <input type="text" class="form-control" id="height">
 										{{/if}}
+										{{#if useragent}}
+											<label class="form-control-label">User Agent:</label> <input type="text" class="form-control" id="useragent">
+										{{/if}}
 									</div>
 								</form>
 							</div>
@@ -90,7 +93,7 @@
 					</div>
 				</div>
 				<div class="col-sm-3">
-					<button type="button" class="btn btn-secondary" style="float:right" id="_path" disabled >Set Default Path</button>
+					<button type="button" class="btn btn-secondary" style="float:right" id="_path" disabled >Set Parameter</button>
 				</div>
 			</div>
 			<div id="chatLog"></div>
@@ -98,7 +101,7 @@
 			<script>
 				var template = $('#handlebars-demo').html();
 				var templateScript = Handlebars.compile(template);
-				var context = {"arr":[{"id":"connect","modalid":"port","vid":"portnumber","label":"Port"},{"id":"record","modalid":"record","vid":"url","label":"URL","size":true},{"id":"path","modalid":"path","vid":"defaultpath","label":"Path"}]};
+				var context = {"arr":[{"id":"connect","modalid":"port","vid":"portnumber","label":"Port"},{"id":"record","modalid":"record","vid":"url","label":"URL","size":true},{"id":"path","modalid":"path","vid":"defaultpath","label":"Path","useragent":true}]};
 				var html = templateScript(context);
 				var d1 = document.getElementById('chatLog');
 				d1.insertAdjacentHTML('afterend', html);

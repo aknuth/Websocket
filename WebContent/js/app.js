@@ -173,15 +173,25 @@ $(document).ready(function() {
 		} else {
 			$('#defaultpath').val(app.getPath('appData'));
 		}
+		if (localStorage.getItem('useragent')){
+			$('#useragent').val(localStorage.getItem('useragent'));
+		}
 		$('#pathModal').modal('show');
 	})
 
 	$('#path').click(function() {
 		$('#pathModal').modal('hide');
-		var p = $('#defaultpath').val()
+		var p = $('#defaultpath').val();
 		var msg = {"action":"set_path","dir":p};
 		socket.send(JSON.stringify(msg));
+		
+		var ua = $('#useragent').val();
+		var msg = {"user-agent":ua};
+		socket.send(JSON.stringify(msg));
+
 		localStorage.setItem('path', $('#defaultpath').val());
+		localStorage.setItem('useragent', $('#useragent').val());
+		
 		switchButton('#_record',State.ENABLED);
 		switchButton('#_play',State.ENABLED);
 	})
