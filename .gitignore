@@ -1,5 +1,7 @@
 /classes/
 .settings
 .classpath
+WebContent/node_modules
+WebContent/json
 .project
 /target/

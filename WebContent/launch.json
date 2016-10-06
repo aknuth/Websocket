@@ -1,0 +1,12 @@
+{
+    "name": "Debug",
+    "type": "chrome",
+    "request": "launch",
+    "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+    "runtimeArgs": [
+        "${workspaceRoot}",
+        "--enable-logging",
+        "--remote-debugging-port=9222"
+     ],
+     "sourceMaps": false
+}

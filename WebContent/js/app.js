@@ -30,10 +30,12 @@ Color.LIGHTBLUE = new Color('LIGHTBLUE');
 Color.STAY = new Color('STAY');
 
 $(document).ready(function() {
-	var fs = require('fs');
+	const fs = require('fs');
 
 	const dialog = require('electron').remote.dialog;
 	const app = require('electron').remote.app;
+	const {ipcRenderer} = require('electron');
+	const moment = require('moment');
   //const actualdir = require('electron').remote.getGlobal("__dirname");
 
 	var socket;
@@ -41,10 +43,11 @@ $(document).ready(function() {
 	var initialWidth = 0;
 	var initialHeight = 0;
 	var initialTime = 0;
-
-	function connect() {
-		var host = "ws://localhost:" + $('#portnumber').val();
-
+	let child; 
+		
+	function connect(json) {
+		//var host = "ws://localhost:" + $('#portnumber').val();
+		var host = "ws://localhost:8000";
 		try {
 			socket = new WebSocket(host);
 
@@ -57,8 +60,10 @@ $(document).ready(function() {
 						var msg = {"action":"set_path","dir":p};
 						socket.send(JSON.stringify(msg));
 					}
+					socket.send(json);
 					switchButton('#_path',State.ENABLED);
 					switchButton('#_connect',State.STAY,Color.GREEN,"Disconnect",'connected');
+					
 				}
 			}
 
@@ -67,6 +72,7 @@ $(document).ready(function() {
 				if (json.callback === 'play' && json.state === 'finished' ){
 					switchButton('#_play',State.ENABLED,Color.WHITE);
 					switchButton('#_record',State.ENABLED);
+					child.kill('SIGTERM');
 				} else if (json.action){
 					if (json.action.type==='resize'){
 						initialWidth = parseInt(json.action.width);
@@ -89,12 +95,12 @@ $(document).ready(function() {
 
 			socket.onclose = function() {
 				if (socket.readyState === 3) {
-					switchButton('#_path',State.DISABLED);
-					switchButton('#_connect',State.STAY,Color.WHITE,'Connect','disconnected');
-					switchButton('#_play',State.DISABLED,Color.WHITE);
-					switchButton('#_record',State.DISABLED,Color.WHITE,'Record','');
-					switchButton('#_pause', State.DISABLED,Color.WHITE, 'Pause', '');
-			}
+					//switchButton('#_path',State.DISABLED);
+					//switchButton('#_connect',State.STAY,Color.WHITE,'Connect','disconnected');
+					//switchButton('#_play',State.DISABLED,Color.WHITE);
+					//switchButton('#_record',State.DISABLED,Color.WHITE,'Record','');
+					//switchButton('#_pause', State.DISABLED,Color.WHITE, 'Pause', '');
+				}
 			}
 
 		} catch (exception) {
@@ -109,20 +115,6 @@ $(document).ready(function() {
 		$('#chatLog').append(msg + '</p>');
 	}
 
-	$('#connect').click(function() {
-		$('#portModal').modal('hide');
-		connect();
-	});
-
-	$('#_connect').click(function() {
-			if ($('#_connect').attr('name') == 'disconnected') {
-				$('#portnumber').val('8000');
-				$('#portModal').modal('show');
-			} else {
-				socket.close();
-			}
-	})
-
 	$('#_record').click(function() {
 			if ($('#_record').attr('name') == 'recording') {
 				dialog.showSaveDialog({title: 'Save as JSON',filters: [{name: 'JSON', extensions: ['json']}]},function (fileName) {
@@ -135,8 +127,10 @@ $(document).ready(function() {
 					s="";
 					$('#chatLog').empty();
 					switchButton('#_pause',State.DISABLED);
-					switchButton('#_record',State.STAY,Color.WHITE,'Record','');
+					switchButton('#_record',State.ENABLED,Color.WHITE,'Record','');
 					switchButton('#_play',State.ENABLED);
+					socket.close();
+					child.kill('SIGTERM');
 				});
 			} else {
 				if (localStorage.getItem('url')){
@@ -161,7 +155,14 @@ $(document).ready(function() {
 		} else {
 			var msg = {"action":"record","state":"begin","url":$('#url').val()};
 		}
-		socket.send(JSON.stringify(msg));
+		const execFile = require('child_process').execFile;
+		child = execFile('C:/Users/aknuth/Downloads/WebEventRecorder_20161004_1422/WebEventBrowser.exe', ['--url=about:blank'], (error, stdout, stderr) => {
+		  if (error) {
+			console.log(error);
+		  }
+		  console.log(stdout);
+		});
+		connect(JSON.stringify(msg));
 		switchButton('#_record',State.STAY,Color.RED,'Stop Record','recording');
 		switchButton('#_play',State.DISABLED);
 		switchButton('#_pause',State.ENABLED);
@@ -200,13 +201,63 @@ $(document).ready(function() {
 		dialog.showOpenDialog({title: 'Open JSON for Play',filters: [{name: 'JSON', extensions: ['json']}]},function (fileName) {
 			if (fileName === undefined) return;
 			var msg = {"action":"play","json":fileName[0]}
-			socket.send(JSON.stringify(msg));
+			const execFile = require('child_process').execFile;
+			child = execFile('C:/Users/aknuth/Downloads/WebEventRecorder_20161004_1422/WebEventBrowser.exe', ['--url=about:blank'], (error, stdout, stderr) => {
+			  if (error) {
+				console.log(error);
+			  }
+			  console.log(stdout);
+			});
+			connect(JSON.stringify(msg));			
+			//socket.send(JSON.stringify(msg));
 			switchButton('#_play',State.STAY,Color.BLUE);
 			switchButton('#_play',State.ENABLED);
 			switchButton('#_record',State.DISABLED);
 		});
 	})
 
+	$('#play').click(function() {
+		dialog.showOpenDialog({title: 'Open JSON for Play',filters: [{name: 'JSON', extensions: ['json']}]},function (fileName) {
+			if (fileName === undefined) return;
+			var msg = {"action":"play","json":fileName[0]}
+			var json = require(fileName[0]);
+			//var wp = window.open(json.start_url);
+			
+			ipcRenderer.send('start',json.start_url);
+			var p = Promise.resolve();
+			var i = 0;
+			for (let value of json.actions){
+				let all = json.actions.length;
+				let j = i++;
+				p = p.then(() => doTheWork(value,all,j));				
+			}
+			switchButton('#_play',State.STAY,Color.BLUE);
+			switchButton('#_play',State.ENABLED);
+			switchButton('#_record',State.DISABLED);
+		});
+	})
+	
+	function doTheWork(json,n,i){
+		return new Promise(function(resolve,reject){
+			setTimeout(()=>{
+				if (json.type==='resize'){
+					console.log(i+' von'+n+' -> '+moment().format("HH:mm:ss-SSS")+':'+json.type+' - '+json.time);
+					ipcRenderer.send('resize',json.width,json.height);
+				} else if (json.type==='click' && json.wp===513){
+					console.log(i+' von'+n+' -> '+moment().format("HH:mm:ss-SSS")+':'+json.type+' - '+json.time);
+					ipcRenderer.send('click',json.x,json.y);
+				} else if (json.type==='type' && json.ch>0){
+					console.log(i+' von'+n+' -> '+moment().format("HH:mm:ss-SSS")+':'+json.type+' - '+json.time);
+					ipcRenderer.send('type',json.ch);
+				} else if (json.type==='move'){
+					console.log(i+' von'+n+' -> '+moment().format("HH:mm:ss-SSS")+':'+json.type+' - '+json.time);
+					ipcRenderer.send('move',json.x,json.y);
+				}
+				resolve();
+			},json.time)
+		});
+	}
+	
 	$('#_pause').click(function() {
 		if ($('#_pause').attr('name') == 'pause') {
 			var msg = {"action":"resume"};
