@@ -34,6 +34,7 @@
 											<label class="form-control-label">Height:</label> <input type="text" class="form-control" id="height">
 										{{/if}}
 										{{#if useragent}}
+											<label class="form-control-label">WebEventRecorder Executable Path:</label> <input type="text" class="form-control" id="exepath">
 											<label class="form-control-label">User Agent:</label> <input type="text" class="form-control" id="useragent">
 										{{/if}}
 									</div>
@@ -90,11 +91,11 @@
 					</div>
 					<div class="btn-group" role="group" aria-label="Basic example">
 						<button type="button" class="btn btn-secondary" id="_play">Play</button>
-						<button type="button" class="btn btn-secondary" id="play">Play on Electron</button>
-					</div>
+<!--						<button type="button" class="btn btn-secondary" id="play">Play on Electron</button>
+-->					</div>
 				</div>
 				<div class="col-sm-3">
-					<button type="button" class="btn btn-secondary" style="float:right" id="_path" disabled >Set Parameter</button>
+					<button type="button" class="btn btn-secondary" style="float:right" id="_path">Set Parameter</button>
 				</div>
 			</div>
 			<div id="chatLog"></div>

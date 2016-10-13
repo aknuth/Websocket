@@ -24,7 +24,7 @@ ipcMain.on('start',()=>{
 	//console.log('playWin:'+playWin);
 	//playWin.once('ready-to-show', () => {
 	playWin = new BrowserWindow({
-		width:1024,height:800,x:0,y:0,show: true,parent:'top',
+		width:(1600),height:(1000),x:0,y:0,show: true,parent:'top',frame:false,
 		webPreferences: {
     		"allowDisplayingInsecureContent": true,
 			"allowRunningInsecureContent":true,
@@ -33,7 +33,7 @@ ipcMain.on('start',()=>{
   		}
 	});
 	playWin.on('closed', () => { playWin = null; });
-	//playWin.setMenu(null);
+	playWin.setMenu(null);
 	//playWin.show();
 	
 	playWin.loadURL('https://www.bahn.de/p/view/index.shtml',{userAgent:'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36'});
@@ -76,4 +76,12 @@ ipcMain.on('type',(event,ch)=>{
 
 ipcMain.on('move',(event,xcord,ycord)=>{
 	playWin.webContents.sendInputEvent({type: 'mouseMove', x: xcord, y: ycord});
+});
+
+ipcMain.on('wheel',(event,xcord,ycord,delta)=>{
+	playWin.webContents.sendInputEvent({type: 'mouseWheel', x: 0, y: 0, deltaX: 0, deltaY: -120,canScroll: true});
+});
+
+ipcMain.on('close',()=>{
+	playWin.close();
 });

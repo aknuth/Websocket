@@ -44,7 +44,14 @@ $(document).ready(function() {
 	var initialHeight = 0;
 	var initialTime = 0;
 	let child; 
-		
+
+	if (localStorage.getItem('path') && localStorage.getItem('exepath')){
+		switchButton('#_record',State.ENABLED);
+		switchButton('#_play',State.ENABLED);
+	} else {
+		switchButton('#_record',State.DISABLED);
+		switchButton('#_play',State.DISABLED);
+	}	
 	function connect(json) {
 		//var host = "ws://localhost:" + $('#portnumber').val();
 		var host = "ws://localhost:8000";
@@ -54,16 +61,17 @@ $(document).ready(function() {
 			socket.onopen = function() {
 				if (socket.readyState === 1) {
 					if (localStorage.getItem('path')){
-						switchButton('#_record',State.ENABLED);
-						switchButton('#_play',State.ENABLED);
 						var p = localStorage.getItem('path');
 						var msg = {"action":"set_path","dir":p};
 						socket.send(JSON.stringify(msg));
 					}
+					if (localStorage.getItem('useragent')){
+						var ua = localStorage.getItem('useragent');
+						var msg = {"user-agent":ua};
+						socket.send(JSON.stringify(msg));
+					}
 					socket.send(json);
-					switchButton('#_path',State.ENABLED);
 					switchButton('#_connect',State.STAY,Color.GREEN,"Disconnect",'connected');
-					
 				}
 			}
 
@@ -156,7 +164,7 @@ $(document).ready(function() {
 			var msg = {"action":"record","state":"begin","url":$('#url').val()};
 		}
 		const execFile = require('child_process').execFile;
-		child = execFile('C:/Users/aknuth/Downloads/WebEventRecorder_20161004_1422/WebEventBrowser.exe', ['--url=about:blank'], (error, stdout, stderr) => {
+		child = execFile(localStorage.getItem('exepath')+'/WebEventBrowser.exe', ['--url=about:blank'], (error, stdout, stderr) => {
 		  if (error) {
 			console.log(error);
 		  }
@@ -177,6 +185,9 @@ $(document).ready(function() {
 		if (localStorage.getItem('useragent')){
 			$('#useragent').val(localStorage.getItem('useragent'));
 		}
+		if (localStorage.getItem('exepath')){
+			$('#exepath').val(localStorage.getItem('exepath'));
+		}
 		$('#pathModal').modal('show');
 	})
 
@@ -184,17 +195,23 @@ $(document).ready(function() {
 		$('#pathModal').modal('hide');
 		var p = $('#defaultpath').val();
 		var msg = {"action":"set_path","dir":p};
-		socket.send(JSON.stringify(msg));
 		
 		var ua = $('#useragent').val();
 		var msg = {"user-agent":ua};
-		socket.send(JSON.stringify(msg));
 
 		localStorage.setItem('path', $('#defaultpath').val());
 		localStorage.setItem('useragent', $('#useragent').val());
-		
-		switchButton('#_record',State.ENABLED);
-		switchButton('#_play',State.ENABLED);
+		let epath = $('#exepath').val();
+		epath = S(epath).replaceAll('\\', '/');
+		localStorage.setItem('exepath', S(epath).ensureRight('/'));
+
+		if (localStorage.getItem('path') && localStorage.getItem('exepath')){
+			switchButton('#_record',State.ENABLED);
+			switchButton('#_play',State.ENABLED);
+		} else {
+			switchButton('#_record',State.DISABLED);
+			switchButton('#_play',State.DISABLED);
+		}	
 	})
 
 	$('#_play').click(function() {
@@ -202,14 +219,13 @@ $(document).ready(function() {
 			if (fileName === undefined) return;
 			var msg = {"action":"play","json":fileName[0]}
 			const execFile = require('child_process').execFile;
-			child = execFile('C:/Users/aknuth/Downloads/WebEventRecorder_20161004_1422/WebEventBrowser.exe', ['--url=about:blank'], (error, stdout, stderr) => {
+			child = execFile(localStorage.getItem('exepath')+'WebEventBrowser.exe', ['--url=about:blank'], (error, stdout, stderr) => {
 			  if (error) {
 				console.log(error);
 			  }
 			  console.log(stdout);
 			});
 			connect(JSON.stringify(msg));			
-			//socket.send(JSON.stringify(msg));
 			switchButton('#_play',State.STAY,Color.BLUE);
 			switchButton('#_play',State.ENABLED);
 			switchButton('#_record',State.DISABLED);
@@ -231,7 +247,7 @@ $(document).ready(function() {
 				let j = i++;
 				p = p.then(() => doTheWork(value,all,j));				
 			}
-			switchButton('#_play',State.STAY,Color.BLUE);
+			//switchButton('#_play',State.STAY,Color.BLUE);
 			switchButton('#_play',State.ENABLED);
 			switchButton('#_record',State.DISABLED);
 		});
@@ -249,9 +265,16 @@ $(document).ready(function() {
 				} else if (json.type==='type' && json.ch>0){
 					console.log(i+' von'+n+' -> '+moment().format("HH:mm:ss-SSS")+':'+json.type+' - '+json.time);
 					ipcRenderer.send('type',json.ch);
+				} else if (json.type==='wheel'){
+					console.log(i+' von'+n+' -> '+moment().format("HH:mm:ss-SSS")+':'+json.type+' - '+json.time);
+					ipcRenderer.send('wheel',json.x,json.y,json.delta);
 				} else if (json.type==='move'){
 					console.log(i+' von'+n+' -> '+moment().format("HH:mm:ss-SSS")+':'+json.type+' - '+json.time);
 					ipcRenderer.send('move',json.x,json.y);
+				}
+				if (i+1===n){
+					console.log(i+' von'+n+' -> '+moment().format("HH:mm:ss-SSS")+':close');
+					ipcRenderer.send('close');
 				}
 				resolve();
 			},json.time)
