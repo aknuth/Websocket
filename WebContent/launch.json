@@ -8,5 +8,5 @@
         "--enable-logging",
         "--remote-debugging-port=9222"
      ],
-     "sourceMaps": false
+     "sourceMaps": false 
 }
