@@ -1,0 +1,47 @@
+<html>
+    <head>
+        <style>
+@import "compass/css3";
+body {
+    margin:0;
+    padding:0;
+}
+.flex-container {
+  padding: 0px;
+  margin: 0px;
+  list-style: none;
+  
+  display: flex;
+  
+  flex-flow: row wrap;
+  justify-content: space-around;
+}
+
+.flex-item {
+  background: tomato;
+  color: white;
+  font-weight: bold;
+  font-size: 3em;
+  text-align: center;
+  flex-basis: auto;
+}
+#container{
+    width: 1000px;
+    margin: 0 auto;
+    border: 1px dotted grey;
+}        
+        </style>        
+    </head>
+    <body>
+        <div id="container">
+        <ul class="flex-container">
+            <li class="flex-item">1</li>
+            <li class="flex-item">2</li>
+            <li class="flex-item">3</li>
+            <li class="flex-item">4</li>
+            <li class="flex-item">5</li>
+            <li class="flex-item">6</li>
+        </ul>
+        </div>        
+    </body>
+</html>

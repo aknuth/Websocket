@@ -1,26 +1,26 @@
+*, *:before, *:after {
+  box-sizing: border-box;
+}
 body {
     font-family:Arial, Helvetica, sans-serif;
 }
+.bg-faded {
+    background-color: #d5d9e0;
+}
+.grey{
+    background-color: #858896;
+}
+.nav1{
+    width:500px;
+    min-height: calc(100vh - 59px);
+    height: calc(100vh - 59px);
+}
+.content{
+    width: calc(100vw - 500px);
+    height: calc(100vh - 59px);
+    padding: 100px;
+}
 #container{
-    border:5px solid grey;
-    width:1024px;
-    margin:0 auto;
-    padding:10px;
-}
-#chatLog{
-    padding:5px;
-    border:1px solid black;
-}
-#chatLog p {
-    margin:0;
-}
-#_play{
-    /*margin-top: 8px;*/
-}
-.event {
-    color:#999;
-}
-.warning{
-    font-weight:bold;
-    color:#CCC;
+    display:flex;
+    justify-content: space-between;
 }

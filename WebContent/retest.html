@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>ReTest Web</title>
+	<!--  -->
+	<link rel="stylesheet" href="css/slick.grid.css" type="text/css" />
+	<link rel="stylesheet" href="css/jquery-ui-1.11.3.custom.css" type="text/css" />
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+	<link rel="stylesheet" href="css/main.css" />
+	<!-- scripts -->
+	<script type="text/javascript">
+		module.paths.push(__dirname+'/node_modules');
+		window.$ = window.jQuery = require('jquery');
+		var S = require('string');
+	</script>
+	<script src="js/tether.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/retest.js"></script>
+	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+	<script src="js/handlebars-v4.0.5.js"></script>
+
+	<script id="handlebars-demo" type="text/x-handlebars-template">
+	{{#each arr}}
+				<div class="modal fade" id="{{this.modalid}}Modal" tabindex="-1" role="dialog" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+								<h4 class="modal-title" id="{{this}}ModalLabel">Please select the {{this.label}}</h4>
+							</div>
+							<div class="modal-body">
+								<form>
+									<div class="form-group">
+										<label class="form-control-label">{{this.label}}:</label> <input type="text" class="form-control" id="{{this.vid}}">
+										{{#if size}}
+											<label class="form-control-label">Width:</label> <input type="text" class="form-control" id="width">
+											<label class="form-control-label">Height:</label> <input type="text" class="form-control" id="height">
+										{{/if}}
+										{{#if useragent}}
+											<label class="form-control-label">WebEventRecorder Executable Path:</label> <input type="text" class="form-control" id="exepath">
+											<label class="form-control-label">User Agent:</label> <input type="text" class="form-control" id="useragent">
+										{{/if}}
+									</div>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-primary" id="{{this.id}}">Ok</button>
+							</div>
+						</div>
+					</div>
+				</div>
+	{{/each}}
+	</script>
+
+
+</head>
+
+<body>
+		<nav class="navbar navbar-static-top bg-faded">
+			<div class="row">
+				<div class="col-sm-9">
+					<!-- 					<div class="btn-group" role="group"> -->
+					<!-- 						<button type="button" class="btn btn-secondary" id="_connect" name="disconnected">Connect</button> -->
+					<!-- 					</div> -->
+					<div class="d-inline-block">
+						<img src="img/ReTest.png" class="img-rounded" style="max-height:35px" />
+					</div>
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"><img src="img/ReCapture.png" style="max-height:25px"></button>
+						<div class="dropdown-menu">
+							<a class="dropdown-item" href="#" id="_record">Aktionsfolge aufzeichnen</a>
+							<a class="dropdown-item" href="#" id="_record">Aktionsfolge bearbeiten</a>
+						</div>
+
+					</div>
+					<div class="btn-group" role="group" aria-label="Basic example">
+						<button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"><img src="img/RePlay.png" style="max-height:25px"></button>
+						<div class="dropdown-menu">
+							<a class="dropdown-item" href="#" id="_play">Test ausführen</a>
+							<!--						<button type="button" class="btn btn-secondary" id="play">Play on Electron</button>--></div>
+					</div>
+				</div>
+				<div class="col-sm-3">
+					<button type="button" class="btn btn-secondary" style="float:right" id="_path">...</button>
+				</div>
+			</div>
+		</nav>
+	<div id="container">  
+		<div class="nav1 grey"></div>
+		<div class="content">
+			<table id="example" class="display" cellspacing="0" width="100%">
+				<thead>
+					<th>Event</th>
+					<th>Dauer</th>
+				</thead>
+				<tfoot>
+					<th>Event</th>
+					<th>Dauer</th>
+				</tfoot>
+			</table>
+		</div>
+	</div>
+	<!--<div id="chatLog"></div>-->
+	<script>
+		var template = $('#handlebars-demo').html();
+		var templateScript = Handlebars.compile(template);
+		var context = {"arr":[{"id":"connect","modalid":"port","vid":"portnumber","label":"Port"},{"id":"record","modalid":"record","vid":"url","label":"URL","size":true},{"id":"path","modalid":"path","vid":"defaultpath","label":"Path","useragent":true}]};
+		var html = templateScript(context);
+		var d1 = document.getElementById('container');
+		d1.insertAdjacentHTML('afterend', html);
+	</script>
+	
+</body>
+
+</html>

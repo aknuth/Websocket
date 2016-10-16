@@ -30,8 +30,6 @@ Color.LIGHTBLUE = new Color('LIGHTBLUE');
 Color.STAY = new Color('STAY');
 
 $(document).ready(function() {
-
-
 	const fs = require('fs');
 
 	const dialog = require('electron').remote.dialog;
@@ -42,6 +40,14 @@ $(document).ready(function() {
 
 	var socket;
 	var s = '';
+	var eventanzeige = '';
+	var zeitanzeige = '';
+
+	var movebuffer = '';
+	var typebuffer = '';
+	var zeitbuffer = 0;
+	var zeitbuffertype = 0;
+
 	var initialWidth = 0;
 	var initialHeight = 0;
 	var initialTime = 0;
@@ -88,6 +94,17 @@ $(document).ready(function() {
 						initialWidth = parseInt(json.action.width);
 						initialHeight = parseInt(json.action.height);
 						initialTime = parseInt(json.action.time);
+						eventanzeige = 'Resize: '+initialWidth+' x '+initialHeight;
+						zeitanzeige = initialTime;
+					} else if (json.action.type==='click' && json.action.wp===513){
+						eventanzeige = 'Click - X:'+json.action.x+' - Y:'+json.action.y;
+						zeitanzeige = json.action.time;
+					} else if (json.action.type==='type' && json.action.ch>0){
+						typebuffer = typebuffer + String.fromCharCode(json.action.ch).charAt(0);
+						zeitbuffertype = zeitbuffertype + json.action.time;
+					} else if (json.action.type==='move'){
+						movebuffer = "Move";
+						zeitbuffer = zeitbuffer + json.action.time;
 					}
 					s = s + S(msg.data).between('{"action":', '}}').s + '},';
 				} else if (json.event && (json.event.type=='screenshot' || json.event.type=='domtree')){
@@ -99,8 +116,33 @@ $(document).ready(function() {
 					s = s + ',"start_url":"';
 					s = s + json.event.start_url;
 					s = s + '","actions":['+'{"type":"resize","width":'+initialWidth+',"height":'+initialHeight+',"time":'+initialTime+'},';
+					eventanzeige='Start URL: '+json.event.start_url;
+					zeitanzeige='Start URL: '+json.event.start_time;
 				}
-				message('<p class="message">Received: ' + msg.data);
+				if (eventanzeige!=''){
+					if (movebuffer!=''){
+						t.row.add( [
+							movebuffer,
+							zeitbuffer.toString()
+						] ).draw( false );
+						movebuffer='';
+						zeitbuffer=0;
+					}
+					if (typebuffer!=''){
+						t.row.add( [
+							typebuffer,
+							zeitbuffertype.toString()
+						] ).draw( false );
+						typebuffer='';
+						zeitbuffertype=0;
+					}
+					t.row.add( [
+						eventanzeige,
+						zeitanzeige
+					] ).draw( false );
+					eventanzeige='';
+					zeitanzeige='';
+				}
 			}
 
 			socket.onclose = function() {
@@ -135,7 +177,6 @@ $(document).ready(function() {
 						fs.writeFile(fileName, s, function (err) {});
 					}
 					s="";
-					$('#chatLog').empty();
 					switchButton('#_pause',State.DISABLED);
 					switchButton('#_record',State.ENABLED,Color.WHITE,'Record','');
 					switchButton('#_play',State.ENABLED);
@@ -250,8 +291,8 @@ $(document).ready(function() {
 				p = p.then(() => doTheWork(value,all,j));				
 			}
 			//switchButton('#_play',State.STAY,Color.BLUE);
-			switchButton('#_play',State.ENABLED);
-			switchButton('#_record',State.DISABLED);
+			//switchButton('#_play',State.ENABLED);
+			//switchButton('#_record',State.DISABLED);
 		});
 	})
 	
@@ -368,5 +409,14 @@ $(document).ready(function() {
 		}
 	}
 
+    var t = $('#example').DataTable({
+			 "info": false,
+			 paging: false,
+			 searching: false,
+			 ordering:  false,
+			 scrollY: '50vh',
+        	 scrollCollapse: true
+	});
+	
 
 });

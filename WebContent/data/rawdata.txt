@@ -1,0 +1,32 @@
+Received: {"action":{"type":"resize","width":1600,"height":1000,"time":1}}
+
+Received: {"event":{"type":"init","start_url":"http://www.bahn.de","start_time":1476647043331}}
+
+Received: {"event":{"type":"resource","request":{"url":"https://www.bahn.de/p/view/index.shtml","method":"GET","type":"RT_MAIN_FRAME","id":1,"header":{"Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8","Upgrade-Insecure-Requests":"1","User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36"},"header":{"Accept-Ranges":"bytes","Cache-Control":"max-age=300","Connection":"keep-alive","Content-Encoding":"gzip","Content-Length":"23503","Content-Type":"text/html","Date":"Sun, 16 Oct 2016 18:44:04 GMT","Server":"Apache","Vary":"Accept-Encoding"}},"response":{"mime":"text/html","status":200,"status_text":"OK","status_text":"OK"}}}
+
+Received: {"action":{"type":"move","x":563,"y":501,"wp":512,"time":60187}}
+
+Received: {"action":{"type":"move","x":545,"y":511,"wp":512,"time":6}}
+
+Received: {"action":{"type":"move","x":531,"y":514,"wp":512,"time":7}}
+
+Received: {"action":{"type":"move","x":510,"y":526,"wp":512,"time":7}}
+
+Received: {"action":{"type":"move","x":489,"y":532,"wp":512,"time":7}}
+
+Received: {"action":{"type":"move","x":474,"y":538,"wp":512,"time":7}}
+
+Received: {"action":{"type":"click","x":584,"y":358,"wp":513,"time":54}}
+
+Received: {"action":{"type":"click","x":584,"y":358,"wp":514,"time":151}}
+
+Received: {"action":{"type":"type","wp":68,"lp":2097153,"ch":0,"time":733}}
+
+Received: {"action":{"type":"type","wp":68,"lp":2097153,"ch":100,"time":4}}
+
+Received: {"action":{"type":"type","wp":68,"lp":-1071644671,"ch":0,"time":72}}
+
+
+Received: {"event":{"type":"resource","request":{"url":"https://st.bahn.de/b/ss/dbbahnprod/1/H.26.1/s62942374502208?AQB=1&ndh=1&t=16%2F9%2F2016%2020%3A45%3A19%200%20-120&fid=6E639BE4686CD816-24AB36C89F50FBED&ce=UTF-8&ns=deutschebahn&pageName=BAHN_PVE_DEU_DE_index&g=https%3A%2F%2Fwww.bahn.de%2Fp%2Fview%2Findex.shtml&c.&content_home_qf=qf_bahn&.c&cc=EUR&c24=D%3DpageName&v24=D%3DpageName&pe=lnk_o&pev2=content_home_qf&s=1920x1200&c=24&j=1.6&v=N&k=Y&bw=1584&bh=938&AQE=1","method":"GET","type":"RT_IMAGE","id":107,"header":{"Accept":"image/webp,image/*,*/*;q=0.8","User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36"},"header":{"Access-Control-Allow-Origin":"*","Cache-Control":"no-cache, no-store, max-age=0, no-transform, private","Connection":"Keep-Alive","Content-Length":"43","Content-Type":"image/gif","Date":"Sun, 16 Oct 2016 18:45:20 GMT","ETag":"\"5803CAC0-2316-5C7B3F92\"","Expires":"Sat, 15 Oct 2016 18:45:20 GMT","Keep-Alive":"timeout=15","Last-Modified":"Mon, 17 Oct 2016 18:45:20 GMT","P3P":"policyref=\"/w3c/p3p.xml\", CP=\"NOI DSP COR NID PSA OUR IND COM NAV STA\"","Pragma":"no-cache","Server":"Omniture DC/2.0.0","Set-Cookie":"s_vi=[CS]v1|2C01E53A851D2046-6000012A6014D531[CE]; Expires=Tue, 16 Oct 2018 18:45:20 GMT; Domain=bahn.de; Path=/","Vary":"*","X-C":"ms-5.0.0","xserver":"www705"}},"response":{"mime":"image/gif","status":200,"status_text":"OK","status_text":"OK"}}}
+
+Received: {"event":{"type":"resource","request":{"url":"https://791773171.log.optimizely.com/event?a=791773171&d=791773171&y=true&src=js&s785973598=gc&s793353754=direct&s802242028=false&s2437550836=none&tsent=1476643519.36&n=engagement&u=oeu1476643443697r0.7684780659738715&wxhr=true&time=1476643519.36&f=7631471171,7618521271,7636020148&g=794835481&cx2=51c3abca","method":"GET","type":"RT_XHR","id":106,"header":{"Accept":"*/*","Origin":"https://www.bahn.de","User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36"},"header":{"Access-Control-Allow-Credentials":"true","Access-Control-Allow-Headers":"Content-Type, X-Requested-With","Access-Control-Allow-Methods":"GET","Access-Control-Allow-Origin":"https://www.bahn.de","Connection":"keep-alive","Content-Length":"2","Content-Type":"application/json","Date":"Sun, 16 Oct 2016 18:45:20 GMT","P3P":"CP=\"IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA\"","Server":"nginx"}},"response":{"mime":"application/json","status":200,"status_text":"OK","status_text":"OK"}}}

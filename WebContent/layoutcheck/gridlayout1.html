@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>CSS Grid Layout Gallery Demo</title>
+	<meta charset="utf-8">
+	<style>
+		body {
+			background-color: #111;
+			color: #EEE;
+		}
+		
+		* {
+			margin: 0;
+			border: 0;
+		}
+		
+		body {
+			margin: 0;
+			font-family: Arial;
+			background-color: #f2f2f2;
+		}
+		
+		.box {
+			color: #fff;
+			padding: 1em;
+			text-align: center;
+			background-color: #efefef;
+		}
+		
+		.tweets {
+			background-color: #A2DED0;
+		}
+		
+		.replies {
+			background-color: #F4D03F;
+		}
+		
+		.search {
+			background-color: #6C7A89;
+		}
+		
+		.messages {
+			background-color: #59ABE3;
+		}
+		/* Our Grid Code */
+		
+		.app-layout {
+			display: grid;
+			grid-template-columns: 1fr 1fr 1fr 1fr;
+			grid-template-rows: 100vh;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="app-layout">
+		<div class="tweets box">Tweets</div>
+		<div class="replies box">Replies</div>
+		<div class="search box">Search</div>
+		<div class="messages box">Messages</div>
+	</div>
+</body>
