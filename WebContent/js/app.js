@@ -70,7 +70,8 @@ $(document).ready(function() {
 						var msg = {"user-agent":ua};
 						socket.send(JSON.stringify(msg));
 					}
-					socket.send(json);
+					var msg = {"guipath":`${__dirname}`};
+					socket.send(JSON.stringify(msg));
 					switchButton('#_connect',State.STAY,Color.GREEN,"Disconnect",'connected');
 				}
 			}
