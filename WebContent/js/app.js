@@ -71,7 +71,8 @@ $(document).ready(function() {
 						socket.send(JSON.stringify(msg));
 					}
 					var msg = {"guipath":`${__dirname}`};
-					socket.send(JSON.stringify(msg));
+					socket.send(json);
+					//socket.send(JSON.stringify(msg));
 					switchButton('#_connect',State.STAY,Color.GREEN,"Disconnect",'connected');
 				}
 			}
