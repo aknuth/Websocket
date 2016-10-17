@@ -72,7 +72,7 @@ $(document).ready(function() {
 					}
 					var msg = {"guipath":`${__dirname}`};
 					socket.send(json);
-					//socket.send(JSON.stringify(msg));
+					socket.send(JSON.stringify(msg));
 					switchButton('#_connect',State.STAY,Color.GREEN,"Disconnect",'connected');
 				}
 			}
