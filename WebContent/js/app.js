@@ -57,6 +57,8 @@ $(document).ready(function() {
 						var msg = {"action":"set_path","dir":p};
 						socket.send(JSON.stringify(msg));
 					}
+			        var msg = {"action":"guipath","dir":`${__dirname}`}; 
+			        socket.send(JSON.stringify(msg)); 
 					switchButton('#_path',State.ENABLED);
 					switchButton('#_connect',State.STAY,Color.GREEN,"Disconnect",'connected');
 				}
@@ -94,7 +96,7 @@ $(document).ready(function() {
 					switchButton('#_play',State.DISABLED,Color.WHITE);
 					switchButton('#_record',State.DISABLED,Color.WHITE,'Record','');
 					switchButton('#_pause', State.DISABLED,Color.WHITE, 'Pause', '');
-			}
+				}
 			}
 
 		} catch (exception) {
