@@ -57,6 +57,11 @@ $(document).ready(function() {
 						var msg = {"action":"set_path","dir":p};
 						socket.send(JSON.stringify(msg));
 					}
+					if (localStorage.getItem('useragent')){
+						var ua = localStorage.getItem('useragent');
+						var msg = {"user-agent":ua};
+						socket.send(JSON.stringify(msg));
+					}					
 			        var msg = {"action":"guipath","dir":`${__dirname}`}; 
 			        socket.send(JSON.stringify(msg)); 
 					switchButton('#_path',State.ENABLED);
